@@ -16,5 +16,13 @@ router.post(
 
 router.get("/products", productController.index);
 
+router.put(
+  "/products/:id",
+  multer({ dest: os.tmpdir() }).single("image"),
+  productController.update
+);
+
+router.delete("/products/:id", productController.destroy);
+
 // (4) export router
 module.exports = router;
