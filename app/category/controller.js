@@ -1,6 +1,6 @@
 const Category = require("./model");
 
-async function store(req, res, next) {
+const store = async (req, res, next) => {
   try {
     let payload = req.body;
     let category = new Category(payload);
@@ -18,9 +18,9 @@ async function store(req, res, next) {
       next(err);
     }
   }
-}
+};
 
-async function update(req, res, next) {
+const update = async (req, res, next) => {
   try {
     let payload = req.body;
     let category = await Category.findOneAndUpdate(
@@ -39,9 +39,9 @@ async function update(req, res, next) {
     }
     next(err);
   }
-}
+};
 
-async function destroy(req, res, next) {
+const destroy = async (req, res, next) => {
   try {
     // (1) cari dan hapus categori di MongoDB berdasarkan field _id
     let deleted = await Category.findOneAndDelete({ _id: req.params.id });
@@ -50,6 +50,6 @@ async function destroy(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 module.exports = { store, update, destroy };

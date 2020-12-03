@@ -5,7 +5,7 @@ const Category = require("../category/model");
 const Tag = require("../tag/model");
 const config = require("../config");
 
-async function store(req, res, next) {
+const store = async (req, res, next) => {
   let payload = req.body;
   if (payload.category) {
     let category = await Category.findOne({
@@ -65,9 +65,9 @@ async function store(req, res, next) {
     }
     next(err);
   }
-}
+};
 
-async function index(req, res, next) {
+const index = async (req, res, next) => {
   try {
     let { limit = 10, skip = 0, q = "", category = "", tags = [] } = req.query;
     let criteria = {};
@@ -101,9 +101,9 @@ async function index(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
-async function update(req, res, next) {
+const update = async (req, res, next) => {
   try {
     let payload = req.body;
     if (payload.category) {
@@ -180,9 +180,9 @@ async function update(req, res, next) {
     }
     next(err);
   }
-}
+};
 
-async function destroy(req, res, next) {
+const destroy = async (req, res, next) => {
   try {
     let product = await Product.findOneAndDelete({ _id: req.params.id });
     let currentImage = `${config.rootPath}/public/upload/${product.image_url}`;
@@ -193,6 +193,6 @@ async function destroy(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 module.exports = { index, update, store, destroy };

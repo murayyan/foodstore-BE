@@ -1,6 +1,6 @@
 const Tag = require("./model");
 
-async function store(req, res, next) {
+const store = async (req, res, next) => {
   try {
     // (1) dapatkan data dari request yang dikirimkan client
     let payload = req.body;
@@ -21,9 +21,9 @@ async function store(req, res, next) {
     }
     next(err);
   }
-}
+};
 
-async function update(req, res, next) {
+const update = async (req, res, next) => {
   try {
     let payload = req.body;
     let tag = await Tag.findOneAndUpdate({ _id: req.params.id }, payload, {
@@ -41,9 +41,9 @@ async function update(req, res, next) {
     }
     next(err);
   }
-}
+};
 
-async function destroy(req, res, next) {
+const destroy = async (req, res, next) => {
   try {
     console.log("del");
     let tag = await Tag.findOneAndDelete({ _id: req.params.id });
@@ -51,6 +51,6 @@ async function destroy(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
+};
 
 module.exports = { store, update, destroy };
