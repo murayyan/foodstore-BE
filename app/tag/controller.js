@@ -2,6 +2,15 @@ const Tag = require("./model");
 
 const store = async (req, res, next) => {
   try {
+    //--- cek policy ---/
+    let policy = policyFor(req.user);
+    if (!policy.can("create", "Tag")) {
+      return res.json({
+        error: 1,
+        message: `Anda tidak memiliki akses untuk membuat tag`,
+      });
+    }
+
     // (1) dapatkan data dari request yang dikirimkan client
     let payload = req.body;
     // (2) buat objek Tag baru berdasarkan payload
@@ -25,6 +34,15 @@ const store = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
+    //--- cek policy ---/
+    let policy = policyFor(req.user);
+    if (!policy.can("update", "Tag")) {
+      return res.json({
+        error: 1,
+        message: `Anda tidak memiliki akses untuk mengupdate tag`,
+      });
+    }
+
     let payload = req.body;
     let tag = await Tag.findOneAndUpdate({ _id: req.params.id }, payload, {
       new: true,
@@ -45,7 +63,14 @@ const update = async (req, res, next) => {
 
 const destroy = async (req, res, next) => {
   try {
-    console.log("del");
+    //--- cek policy ---/
+    let policy = policyFor(req.user);
+    if (!policy.can("delete", "Tag")) {
+      return res.json({
+        error: 1,
+        message: `Anda tidak memiliki akses untuk menghapus tag`,
+      });
+    }
     let tag = await Tag.findOneAndDelete({ _id: req.params.id });
     return res.json(tag);
   } catch (err) {

@@ -4,28 +4,37 @@ const Product = require("./model");
 const Category = require("../category/model");
 const Tag = require("../tag/model");
 const config = require("../config");
+const { policyFor } = require("../policy");
 
 const store = async (req, res, next) => {
-  let payload = req.body;
-  if (payload.category) {
-    let category = await Category.findOne({
-      name: { $regex: payload.category, $options: "i" },
-    });
-    if (category) {
-      payload = { ...payload, category: category._id };
-    } else {
-      delete payload.category;
-    }
-  }
-
-  if (payload.tags && payload.tags.length) {
-    let tags = await Tag.find({ name: { $in: payload.tags } });
-    if (tags.length) {
-      payload = { ...payload, tags: tags.map((tag) => tag._id) };
-    }
-  }
-
   try {
+    let policy = policyFor(req.user);
+    if (!policy.can("create", "Product")) {
+      return res.json({
+        error: 1,
+        message: `Anda tidak memiliki akses untuk membuat produk`,
+      });
+    }
+
+    let payload = req.body;
+    if (payload.category) {
+      let category = await Category.findOne({
+        name: { $regex: payload.category, $options: "i" },
+      });
+      if (category) {
+        payload = { ...payload, category: category._id };
+      } else {
+        delete payload.category;
+      }
+    }
+
+    if (payload.tags && payload.tags.length) {
+      let tags = await Tag.find({ name: { $in: payload.tags } });
+      if (tags.length) {
+        payload = { ...payload, tags: tags.map((tag) => tag._id) };
+      }
+    }
+
     if (req.file) {
       let tmp_path = req.file.path;
       let originalExt = req.file.originalname.split(".")[
@@ -92,12 +101,13 @@ const index = async (req, res, next) => {
       tags = await Tag.find({ name: { $in: tags } });
       criteria = { ...criteria, tags: { $in: tags.map((tag) => tag._id) } };
     }
+    let count = await Product.find(criteria).countDocuments();
     let products = await Product.find(criteria)
       .limit(parseInt(limit))
       .skip(parseInt(skip))
       .populate("category")
       .populate("tags");
-    return res.json(products);
+    return res.json({ count, data: products });
   } catch (err) {
     next(err);
   }
@@ -105,6 +115,14 @@ const index = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
+    let policy = policyFor(req.user);
+    if (!policy.can("update", "Product")) {
+      return res.json({
+        error: 1,
+        message: `Anda tidak memiliki akses untuk mengupdate produk`,
+      });
+    }
+
     let payload = req.body;
     if (payload.category) {
       let category = await Category.findOne({
@@ -184,6 +202,14 @@ const update = async (req, res, next) => {
 
 const destroy = async (req, res, next) => {
   try {
+    //--- cek policy ---/
+    let policy = policyFor(req.user);
+    if (!policy.can("delete", "Product")) {
+      return res.json({
+        error: 1,
+        message: `Anda tidak memiliki akses untuk menghapus produk`,
+      });
+    }
     let product = await Product.findOneAndDelete({ _id: req.params.id });
     let currentImage = `${config.rootPath}/public/upload/${product.image_url}`;
     if (fs.existsSync(currentImage)) {
