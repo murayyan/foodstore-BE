@@ -9,6 +9,7 @@ const authRouter = require("./app/auth/router");
 const productRouter = require("./app/product/router");
 const categoryRouter = require("./app/category/router");
 const tagRouter = require("./app/tag/router");
+const regionRouter = require("./app/region/router");
 
 var app = express();
 
@@ -27,6 +28,7 @@ app.use("/auth", authRouter);
 app.use("/api", productRouter);
 app.use("/api", categoryRouter);
 app.use("/api", tagRouter);
+app.use("/api", regionRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
