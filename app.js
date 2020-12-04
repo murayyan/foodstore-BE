@@ -13,6 +13,7 @@ const regionRouter = require("./app/region/router");
 const deliveryRouter = require("./app/delivery-address/router");
 const cartRouter = require("./app/cart/router");
 const orderRouter = require("./app/order/router");
+const invoiceRouter = require("./app/invoice/router");
 
 var app = express();
 
@@ -35,6 +36,7 @@ app.use("/api", regionRouter);
 app.use("/api", deliveryRouter);
 app.use("/api", cartRouter);
 app.use("/api", orderRouter);
+app.use("/api", invoiceRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
