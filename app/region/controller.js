@@ -4,7 +4,7 @@ const path = require("path");
 const getProvinces = async (req, res, next) => {
   const db_provinces = path.resolve(__dirname, "./data/provinces.csv");
   try {
-    const data = await csv().fromFile(db_provinsi);
+    const data = await csv().fromFile(db_provinces);
     return res.json(data);
   } catch (err) {
     return res.json({
