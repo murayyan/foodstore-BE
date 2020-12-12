@@ -27,6 +27,7 @@ const store = async (req, res, next) => {
     }
 
     let address = await DeliveryAddress.findOne({ _id: delivery_address });
+
     // create order but don't save it yet.
     // using mongoose.Types.ObjectId() to generate id for saving ref
     let order = new Order({
@@ -34,14 +35,15 @@ const store = async (req, res, next) => {
       status: "waiting_payment",
       delivery_fee,
       delivery_address: {
-        provinsi: address.provinsi,
-        kabupaten: address.kabupaten,
-        kecamatan: address.kecamatan,
-        kelurahan: address.kelurahan,
+        province: address.province,
+        regency: address.regency,
+        district: address.district,
+        village: address.village,
         detail: address.detail,
       },
       user: req.user._id,
     });
+
     let orderItems = await OrderItem.insertMany(
       items.map((item) => ({
         ...item,
@@ -53,9 +55,11 @@ const store = async (req, res, next) => {
       }))
     );
     orderItems.forEach((item) => order.order_items.push(item));
+
     await order.save();
     // clear cart items
     await CartItem.deleteMany({ user: req.user._id });
+
     return res.json(order);
   } catch (err) {
     if (err && err.name == "ValidationError") {
@@ -65,6 +69,7 @@ const store = async (req, res, next) => {
         fields: err.errors,
       });
     }
+    console.log(err);
     next(err);
   }
 };

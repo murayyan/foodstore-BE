@@ -15,10 +15,10 @@ const orderSchema = Schema(
       default: 0,
     },
     delivery_address: {
-      provinsi: { type: String, required: [true, "provinsi harusdiisi."] },
-      kabupaten: { type: String, required: [true, "kabupaten harusdiisi."] },
-      kecamatan: { type: String, required: [true, "kecamatan harusdiisi."] },
-      kelurahan: { type: String, required: [true, "kelurahan harusdiisi."] },
+      province: { type: String, required: [true, "provinsi harusdiisi."] },
+      regency: { type: String, required: [true, "kabupaten harusdiisi."] },
+      district: { type: String, required: [true, "kecamatan harusdiisi."] },
+      village: { type: String, required: [true, "kelurahan harusdiisi."] },
       detail: { type: String },
     },
     user: {
@@ -31,17 +31,17 @@ const orderSchema = Schema(
 );
 
 orderSchema.plugin(AutoIncrement, { inc_field: "order_number" });
+
 orderSchema.virtual("items_count").get(() => {
   return this.order_items.reduce((total, item) => {
     return total + parseInt(item.qty);
   }, 0);
 });
-orderSchema.post("save", async () => {
+orderSchema.post("save", async function () {
   let sub_total = this.order_items.reduce(
     (sum, item) => (sum += item.price * item.qty),
     0
   );
-  // (1) buat objek `invoice` baru
   let invoice = new Invoice({
     user: this.user,
     order: this._id,

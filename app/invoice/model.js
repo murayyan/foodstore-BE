@@ -12,10 +12,10 @@ const invoiceSchema = Schema(
       required: [true, "delivery_fee harus diisi"],
     },
     delivery_address: {
-      provinsi: { type: String, required: [true, "provinsi harusdiisi."] },
-      kabupaten: { type: String, required: [true, "kabupaten harusdiisi."] },
-      kecamatan: { type: String, required: [true, "kecamatan harusdiisi."] },
-      kelurahan: { type: String, required: [true, "kelurahan harusdiisi."] },
+      province: { type: String, required: [true, "provinsi harusdiisi."] },
+      regency: { type: String, required: [true, "kabupaten harusdiisi."] },
+      district: { type: String, required: [true, "kecamatan harusdiisi."] },
+      village: { type: String, required: [true, "kelurahan harusdiisi."] },
       detail: { type: String },
     },
     total: {
